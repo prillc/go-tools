@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-func (s *session) send() error {
+func (s *Session) send() error {
 	if s.err != nil {
 		return s.err
 	}
@@ -23,7 +23,7 @@ func (s *session) send() error {
 	return err
 }
 
-func (s *session) Send() *session {
+func (s *Session) Send() *Session {
 	err := s.send()
 	if err != nil {
 		log.Fatal(err)
@@ -31,7 +31,7 @@ func (s *session) Send() *session {
 	return s
 }
 
-func (s *session) Close() error {
+func (s *Session) Close() error {
 	if s.err != nil || s.response == nil {
 		return s.err
 	}
@@ -43,14 +43,14 @@ func (s *session) Close() error {
 	return err
 }
 
-func (s *session) GetReader() (io.Reader, error) {
+func (s *Session) GetReader() (io.Reader, error) {
 	if s.response == nil || s.response.Body == nil {
 		return nil, errors.New("empty response")
 	}
 	return s.response.Body, nil
 }
 
-func (s *session) GetBytes() ([]byte, error) {
+func (s *Session) GetBytes() ([]byte, error) {
 	reader, err := s.GetReader()
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func (s *session) GetBytes() ([]byte, error) {
 	return data, err
 }
 
-func (s *session) GetText() (string, error) {
+func (s *Session) GetText() (string, error) {
 
 	bytesData, err := s.GetBytes()
 	if err != nil {

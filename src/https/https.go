@@ -8,7 +8,7 @@ import (
 
 type params map[string]string
 
-type session struct {
+type Session struct {
 	client *http.Client
 
 	// 最近一次的请求数据
@@ -31,16 +31,16 @@ func defaultClient() *http.Client {
 	}
 }
 
-func DefaultSession() *session {
+func DefaultSession() *Session {
 
-	s := &session{
+	s := &Session{
 		client:   defaultClient(),
 		maxRetry: DefaultMaxRetry,
 	}
 	return s
 }
 
-func (s *session) common(method, uri string, ps params, body io.Reader) {
+func (s *Session) common(method, uri string, ps params, body io.Reader) {
 	s.resetLast()
 	// 当前请求的状态设置状态
 	url := GenUrl(uri, params{})
@@ -50,7 +50,7 @@ func (s *session) common(method, uri string, ps params, body io.Reader) {
 	s.err = err
 }
 
-func (s *session) resetLast() {
+func (s *Session) resetLast() {
 	s.request = nil
 
 	s.response = nil
@@ -59,30 +59,31 @@ func (s *session) resetLast() {
 	s.retry = 0
 }
 
-func (s *session) Get(uri string, ps params) *session {
+func (s *Session) Get(uri string, ps params) *Session {
 	s.common(http.MethodGet, uri, ps, nil)
 	return s
 }
 
-func (s *session) Post(uri string, ps params, body io.Reader) {
+func (s *Session) Post(uri string, ps params, body io.Reader) *Session {
 	s.common(http.MethodPost, uri, ps, body)
+	return s
 }
 
-func (s *session) GetClient() *http.Client {
+func (s *Session) GetClient() *http.Client {
 	if s.client == nil {
 		s.client = defaultClient()
 	}
 	return s.client
 }
 
-func (s *session) SetClient(client *http.Client) {
+func (s *Session) SetClient(client *http.Client) {
 	s.client = client
 }
 
-func (s *session) Response() *http.Response {
+func (s *Session) Response() *http.Response {
 	return s.response
 }
 
-func (s *session) setResponse(response *http.Response) {
+func (s *Session) setResponse(response *http.Response) {
 	s.response = response
 }
